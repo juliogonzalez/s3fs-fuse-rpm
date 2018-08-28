@@ -1,5 +1,7 @@
 #!/bin/bash
 VERSION='1.84'
+installdeps=$(yum install -y fuse-devel curl-devel libxml2-devel openssl-devel gcc-c++)
+
 if [ ! -f "./SOURCES/s3fs-fuse-${VERSION}.tar.gz" ]; then
   curl -s -L "https://github.com/s3fs-fuse/s3fs-fuse/archive/v${VERSION}.tar.gz" -o "./SOURCES/s3fs-fuse-${VERSION}.tar.gz"
   if [ $? -ne 0 ]; then
