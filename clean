@@ -1,5 +1,5 @@
 #!/bin/bash
-rm -rf BUILD BUILDROOT RPMS SRPMS SOURCES/*.gz
+rm -rf BUILD BUILDROOT RPMS SRPMS SOURCES/*.tar.gz
 if [ $? -eq 0 ]; then
   echo "Directory cleaned up."
   exit 0

@@ -1,15 +1,16 @@
 %global _hardened_build 1
+%global _release_simple 2
 
 Name:           s3fs-fuse
 Version:        1.84
-Release:        2%{?dist}
+
+Release:        %{_release_simple}%{?dist}
 Summary:        FUSE-based file system backed by Amazon S3
 
 License:        GPLv2
 URL:            https://github.com/s3fs-fuse/s3fs-fuse
-Source0:        https://github.com/s3fs-fuse/s3fs-fuse/archive/%{name}-%{version}.tar.gz
-Source1:        passwd-s3fs
-
+Source0:        https://github.com/s3fs-fuse/s3fs-fuse/archive/v%{version}.tar.gz
+Source1:        https://github.com/juliogonzalez/s3fs-fuse-rpm/blob/%{version}-%{_release_simple}/SOURCES/passwd-s3fs
 
 Requires:	fuse >= 2.8.4
 Requires:       fuse-libs >= 2.8.4
@@ -59,6 +60,7 @@ cp -p %{SOURCE1} passwd-s3fs
 - Build with PIE enabled, as it is required by Fedora
 - Remove Group tag, as required by Fedora
 - Remove unneeded build requirement for mailcap
+- Fix URLs for s3fs-fuse sources
 
 * Sun Jul  8 2018 Julio Gonzalez Gil <git@juliogonzalez.es> - 1.84-1
 - Initial build of 1.84 from https://github.com/s3fs-fuse/s3fs-fuse

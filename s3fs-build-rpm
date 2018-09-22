@@ -1,15 +1,25 @@
 #!/bin/bash
 VERSION='1.84'
-if [ ! -f "./SOURCES/s3fs-fuse-${VERSION}.tar.gz" ]; then
-  curl -s -L "https://github.com/s3fs-fuse/s3fs-fuse/archive/v${VERSION}.tar.gz" -o "./SOURCES/s3fs-fuse-${VERSION}.tar.gz"
+SOURCE_URL=
+
+SPEC='SPECS/s3fs-fuse.spec'
+VERSION=$(sed -rn 's/Version:\s*(.*)/\1/p' ${SPEC})
+SOURCE_URL=$(sed -rn 's/Source0:\s*(.*)/\1/p' ${SPEC}|sed -e "s/%{version}/${VERSION}/")
+TARBALL="./SOURCES/$(basename ${SOURCE_URL})"
+
+if [ ! -f "${TARBALL}" ]; then
+  echo "### Downloading s3fs-fuse sources..."
+  curl -L "${SOURCE_URL}" -o "${TARBALL}"
   if [ $? -ne 0 ]; then
     echo "Could not download fuse-${VERSION}.tar.gz! Check log!"
     exit 1
   fi
 fi
-rpmbuild --quiet --define "_topdir `pwd`" -ba 'SPECS/s3fs-fuse.spec'
+echo "### Building RPMs..."
+rpmbuild --quiet --define "_topdir `pwd`" -ba "${SPEC}"
 if [ $? -eq 0 ]; then
-  echo "Your packages are available at ${PWD}/RPMS."
+  echo "### Binary RPMs available at ${PWD}/RPMS"
+  echo "### Source RPMs available at ${PWD}/SRPMS"
   exit 0
 else
   echo "There are errors. Check log!"
