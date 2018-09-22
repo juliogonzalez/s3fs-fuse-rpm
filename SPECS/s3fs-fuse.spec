@@ -71,7 +71,7 @@ cp -p %{SOURCE1} passwd-s3fs
 - Initial build of 1.80 from https://github.com/s3fs-fuse/s3fs-fuse
 
 * Thu Jul 30 2015 Julio Gonzalez Gil <git@juliogonzalez.es> - 1.79-1
-- Initial build of 1.78 from https://github.com/s3fs-fuse/s3fs-fuse
+- Initial build of 1.79 from https://github.com/s3fs-fuse/s3fs-fuse
 
 * Sat Apr 25 2015 Julio Gonzalez Gil <git@juliogonzalez.es> - 1.78-1
 - Initial build of 1.78 from https://github.com/s3fs-fuse/s3fs-fuse
