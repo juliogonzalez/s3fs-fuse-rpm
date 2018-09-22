@@ -1,6 +1,8 @@
+%global _hardened_build 1
+
 Name:           s3fs-fuse
 Version:        1.84
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        FUSE-based file system backed by Amazon S3
 Group:          System Environment/Base
 
@@ -55,6 +57,9 @@ cp -p %{SOURCE1} passwd-s3fs
 
 
 %changelog
+* Sat Sep 22 2018 Julio Gonzalez Gil <git@juliogonzalez.es> - 1.84-2
+- Build with PIE enabled, as it is required by Fedora
+
 * Sun Jul  8 2018 Julio Gonzalez Gil <git@juliogonzalez.es> - 1.84-1
 - Initial build of 1.84 from https://github.com/s3fs-fuse/s3fs-fuse
 
