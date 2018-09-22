@@ -17,9 +17,8 @@ Requires:	curl >= 7.0
 Requires:	libxml2 >= 2.6
 Requires:	openssl >= 0.9
 
-BuildRequires:  fuse-devel, curl-devel, libxml2-devel
-BuildRequires:  openssl-devel, mailcap
-BuildRequires:	automake, gcc-c++
+BuildRequires:  curl-devel, fuse-devel, libxml2-devel, openssl-devel
+BuildRequires:	automake, gcc-c++, make
 Conflicts:      fuse-s3fs
 Obsoletes:	s3fs
 
@@ -59,6 +58,7 @@ cp -p %{SOURCE1} passwd-s3fs
 * Sat Sep 22 2018 Julio Gonzalez Gil <git@juliogonzalez.es> - 1.84-2
 - Build with PIE enabled, as it is required by Fedora
 - Remove Group tag, as required by Fedora
+- Remove unneeded build requirement for mailcap
 
 * Sun Jul  8 2018 Julio Gonzalez Gil <git@juliogonzalez.es> - 1.84-1
 - Initial build of 1.84 from https://github.com/s3fs-fuse/s3fs-fuse
