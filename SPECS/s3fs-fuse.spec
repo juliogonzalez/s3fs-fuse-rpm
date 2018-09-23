@@ -1,66 +1,65 @@
 %global _hardened_build 1
-%global _release_simple 2
+%{!?make_build: %global make_build %{__make} %{?_smp_mflags}}
 
 Name:           s3fs-fuse
 Version:        1.84
 
-Release:        %{_release_simple}%{?dist}
+Release:        2%{?dist}
 Summary:        FUSE-based file system backed by Amazon S3
 
-License:        GPLv2
+License:        GPLv2+
 URL:            https://github.com/s3fs-fuse/s3fs-fuse
-Source0:        https://github.com/s3fs-fuse/s3fs-fuse/archive/v%{version}.tar.gz
-Source1:        https://github.com/juliogonzalez/s3fs-fuse-rpm/blob/%{version}-%{_release_simple}/SOURCES/passwd-s3fs
+Source0:        https://github.com/s3fs-fuse/s3fs-fuse/archive/v%{version}/%{name}-%{version}.tar.gz
+Source1:        passwd-s3fs
 
-Requires:	fuse >= 2.8.4
+# s3fs-fuse requires at least fuse 2.8.4, which is not available for
+# CentOS/RHEL6
+# See https://github.com/s3fs-fuse/s3fs-fuse/issues/42
 Requires:       fuse-libs >= 2.8.4
-Requires:	curl >= 7.0
-Requires:	libxml2 >= 2.6
-Requires:	openssl >= 0.9
-
-BuildRequires:  curl-devel, fuse-devel, libxml2-devel, openssl-devel
-BuildRequires:	automake, gcc-c++, make
+BuildRequires:  automake
+BuildRequires:  gcc-c++
+BuildRequires:  make
+BuildRequires:  pkgconfig
+BuildRequires:  pkgconfig(fuse) >= 2.8.4
+BuildRequires:  pkgconfig(libcurl)
+BuildRequires:  pkgconfig(libxml-2.0)
+BuildRequires:  pkgconfig(openssl)
+# fuse-s3fs has a binary s3fs too
 Conflicts:      fuse-s3fs
-Obsoletes:	s3fs
 
 %description
 s3fs is a FUSE file system that allows you to mount an Amazon S3 bucket as a
 local file system. It stores files natively and transparently in S3 (i.e.,
 you can use other programs to access the same files). Maximum file size=64GB
 (limited by s3fs, not Amazon).
-.
+
 s3fs is stable and is being used in number of production environments, e.g.,
 rsync backup to s3.
 
-%global debug_package %{nil}
-
 %prep
-%setup -q
-
+%autosetup
+cp -p %{SOURCE1} passwd-s3fs
 
 %build
 ./autogen.sh
 %configure
-make %{?_smp_mflags}
-
+%make_build
 
 %install
-make install DESTDIR=%{buildroot}
-cp -p %{SOURCE1} passwd-s3fs
-
+%make_install
 
 %files
 %{_bindir}/s3fs
 %{_mandir}/man1/s3fs.1*
-%doc AUTHORS README.md ChangeLog COPYING passwd-s3fs
-
+%doc AUTHORS README.md ChangeLog passwd-s3fs
+%{!?_licensedir:%global license %doc}
+%license COPYING
 
 %changelog
 * Sat Sep 22 2018 Julio Gonzalez Gil <git@juliogonzalez.es> - 1.84-2
-- Build with PIE enabled, as it is required by Fedora
-- Remove Group tag, as required by Fedora
+- General cleanup to adapt to Fedora guidelines
+- Build with PIE enabled (required by Fedora)
 - Remove unneeded build requirement for mailcap
-- Fix URLs for s3fs-fuse sources
 
 * Sun Jul  8 2018 Julio Gonzalez Gil <git@juliogonzalez.es> - 1.84-1
 - Initial build of 1.84 from https://github.com/s3fs-fuse/s3fs-fuse

@@ -38,6 +38,8 @@ s3fs:
 * libcurl-devel
 * libxml2-devel
 * openssl-devel
+* pkgconfig
+* epel-rpm-macros (only for CentOS/RHEL6, from the EPEL6 repository)
 
 
 Building fresh RPMs
@@ -64,7 +66,7 @@ Rebuild:
 
 And install
 
-    rpm -Uvh RPMS/$HOSTTYPE/fuse-2.8.5-99.vitki.03.*.$HOSTTYPE.rpm RPMS/$HOSTTYPE/fuse-devel-2.8.5-99.vitki.03.*.$HOSTTYPE.rpm RPMS/$HOSTTYPE/fuse-libs-2.8.5-99.vitki.03.*.$HOSTTYPE.rpm
+    rpm -Uvh RPMS/$HOSTTYPE/fuse-devel-2.8.5-99.vitki.03.*.$HOSTTYPE.rpm RPMS/$HOSTTYPE/fuse-libs-2.8.5-99.vitki.03.*.$HOSTTYPE.rpm
 
 
 Build the s3fs-fuse RPMs

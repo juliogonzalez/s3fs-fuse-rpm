@@ -118,8 +118,12 @@ docker container run -i ${TTY} --name "${CONTAINER_NAME}" -v ${PWD}:/tmp/s3fs-fu
 print_info "Cleaning up"
 docker_run "${CONTAINER_NAME}" "./clean"
 print_info "Installing required dependencies..."
-docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install automake make git rpm-build" # Common dependencies
+docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install automake make git rpm-build pkgconfig" # Common dependencies
 docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install gcc-c++ libcurl-devel libxml2-devel openssl-devel" # s3fs dependencies
+if [ "${DISTRO}" == "centos6" ]; then
+  docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install epel-release" # Install EPEL repository
+  docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install epel-rpm-macros" # Install epel-rpm-macros, required for macros not available by default
+fi
 docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install initscripts kernel mailcap openssl" # Other dependencies only needed at docker
 print_info "Configuring user ci..."
 docker_run "${CONTAINER_NAME}" "/usr/sbin/groupadd -g $(id -g) ci"
@@ -131,14 +135,15 @@ if [ ! -z ${BUILD_FUSE} ]; then
   print_info "Building fuse (required by ${DISTRO})..."
   docker_run "${CONTAINER_NAME}" "./fuse-rpm" "ci"
   print_info "Installing fuse..."
-  docker_run "${CONTAINER_NAME}" "/bin/rpm -i RPMS/$HOSTTYPE/fuse-2.8.5-99.vitki.03.*.$HOSTTYPE.rpm RPMS/$HOSTTYPE/fuse-devel-2.8.5-99.vitki.03.*.$HOSTTYPE.rpm RPMS/$HOSTTYPE/fuse-libs-2.8.5-99.vitki.03.*.$HOSTTYPE.rpm"
+  docker_run "${CONTAINER_NAME}" "/bin/rpm -i RPMS/$HOSTTYPE/fuse-devel-2.8.5-99.vitki.03.*.$HOSTTYPE.rpm RPMS/$HOSTTYPE/fuse-libs-2.8.5-99.vitki.03.*.$HOSTTYPE.rpm"
 else
   print_info "Installing fuse..."
-  docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install fuse fuse-devel" # fuse
+  docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install fuse-libs fuse-devel" # fuse
 fi
 print_info "Building s3fs-fuse package..."
 docker_run "${CONTAINER_NAME}" "./s3fs-build-rpm" "ci"
 print_info "Installing s3fs-fuse package..."
+docker_run "${CONTAINER_NAME}" "/bin/rpm -e fuse-devel"
 docker_run "${CONTAINER_NAME}" "/bin/rpm -i RPMS/$HOSTTYPE/s3fs-fuse-*.*.$HOSTTYPE.rpm"
 print_info "Removing container..."
 remove_container ${CONTAINER_NAME}

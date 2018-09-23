@@ -1,17 +1,14 @@
 #!/bin/bash
-VERSION='1.84'
-SOURCE_URL=
-
 SPEC='SPECS/s3fs-fuse.spec'
 VERSION=$(sed -rn 's/Version:\s*(.*)/\1/p' ${SPEC})
-SOURCE_URL=$(sed -rn 's/Source0:\s*(.*)/\1/p' ${SPEC}|sed -e "s/%{version}/${VERSION}/")
+NAME=$(sed -rn 's/Name:\s*(.*)/\1/p' ${SPEC})
+SOURCE_URL=$(sed -rn 's/Source0:\s*(.*)/\1/p' ${SPEC}|sed -e "s/%{name}/${NAME}/g"|sed -e "s/%{version}/${VERSION}/g")
 TARBALL="./SOURCES/$(basename ${SOURCE_URL})"
-
 if [ ! -f "${TARBALL}" ]; then
   echo "### Downloading s3fs-fuse sources..."
   curl -L "${SOURCE_URL}" -o "${TARBALL}"
   if [ $? -ne 0 ]; then
-    echo "Could not download fuse-${VERSION}.tar.gz! Check log!"
+    echo "Could not download ${TARBALL}! Check log!"
     exit 1
   fi
 fi
