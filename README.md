@@ -1,7 +1,23 @@
 s3fs-fuse
 =========
 
-[![Build Status](https://jenkins.juliogonzalez.es/job/s3fs-fuse-rpm-build/badge/icon)](https://jenkins.juliogonzalez.es/job/s3fs-fuse-rpm-build/)
+<table padding="0">
+  <tr>
+    <th colspan="2">Statuses</th>
+  </tr>
+  <tr>
+    <td>Tests and RPM Builds<br />(CentOS6, CentOS7, Amazon Linux 2017.03)</td>
+    <td>
+      <a href="https://jenkins.juliogonzalez.es/job/s3fs-fuse-rpm-build/" target="_blank"><img src="https://jenkins.juliogonzalez.es/job/s3fs-fuse-rpm-build/badge/icon" alt="Test status" valign="middle" /></a>
+    </td>
+  </tr>
+  <tr>
+    <td>COPR RPM Builds<br />(Fedora 27/28/29/rawhide, EPEL7)</td>
+    <td>
+      <a href="https://copr.fedorainfracloud.org/coprs/juliogonzalez/s3fs-fuse/monitor/" target="_blanK"><img src="https://copr.fedorainfracloud.org/coprs/juliogonzalez/s3fs-fuse/package/s3fs-fuse/status_image/last_build.png" alt="RPM Build status" valign="middle" /></a>
+    </td>
+  </tr>
+</table>
 
 CentOS/RH/Amazon RPMs for S3FS-Fuse <https://github.com/s3fs-fuse/s3fs-fuse>
 
