@@ -135,10 +135,10 @@ if [ ! -z ${BUILD_FUSE} ]; then
   print_info "Building fuse (required by ${DISTRO})..."
   docker_run "${CONTAINER_NAME}" "./fuse-rpm" "ci"
   print_info "Installing fuse..."
-  docker_run "${CONTAINER_NAME}" "/bin/rpm -i RPMS/$HOSTTYPE/fuse-devel-2.8.5-99.vitki.03.*.$HOSTTYPE.rpm RPMS/$HOSTTYPE/fuse-libs-2.8.5-99.vitki.03.*.$HOSTTYPE.rpm"
+  docker_run "${CONTAINER_NAME}" "/bin/rpm -i RPMS/$HOSTTYPE/fuse-2.8.5-99.vitki.03.*.$HOSTTYPE.rpm RPMS/$HOSTTYPE/fuse-devel-2.8.5-99.vitki.03.*.$HOSTTYPE.rpm RPMS/$HOSTTYPE/fuse-libs-2.8.5-99.vitki.03.*.$HOSTTYPE.rpm"
 else
   print_info "Installing fuse..."
-  docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install fuse-libs fuse-devel" # fuse
+  docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install fuse fuse-libs fuse-devel" # fuse
 fi
 print_info "Building s3fs-fuse package..."
 docker_run "${CONTAINER_NAME}" "./s3fs-build-rpm" "ci"
