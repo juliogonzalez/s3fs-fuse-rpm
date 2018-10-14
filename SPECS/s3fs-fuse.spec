@@ -58,7 +58,7 @@ cp -p %{SOURCE1} passwd-s3fs
 %license COPYING
 
 %changelog
-* Sun Oct 13 2018 Julio Gonzalez Gil <git@juliogonzalez.es> - 1.84-3
+* Sun Oct 14 2018 Julio Gonzalez Gil <git@juliogonzalez.es> - 1.84-3
 - Require fuse package on runtime to allow mounting with systemd,
   mount command or /etc/fstab (#1637669)
 
