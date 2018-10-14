@@ -4,7 +4,7 @@
 Name:           s3fs-fuse
 Version:        1.84
 
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        FUSE-based file system backed by Amazon S3
 
 License:        GPLv2+
@@ -16,6 +16,8 @@ Source1:        passwd-s3fs
 # CentOS/RHEL6
 # See https://github.com/s3fs-fuse/s3fs-fuse/issues/42
 Requires:       fuse-libs >= 2.8.4
+# Fuse is required to be able to use mount command, /etc/fstab or mount via systemd
+Requires:       fuse >= 2.8.4
 BuildRequires:  automake
 BuildRequires:  gcc-c++
 BuildRequires:  make
@@ -56,6 +58,10 @@ cp -p %{SOURCE1} passwd-s3fs
 %license COPYING
 
 %changelog
+* Sun Oct 13 2018 Julio Gonzalez Gil <git@juliogonzalez.es> - 1.84-3
+- Require fuse package on runtime to allow mounting with systemd,
+  mount command or /etc/fstab (#1637669)
+
 * Sat Sep 22 2018 Julio Gonzalez Gil <git@juliogonzalez.es> - 1.84-2
 - General cleanup to adapt to Fedora guidelines
 - Build with PIE enabled (required by Fedora)
