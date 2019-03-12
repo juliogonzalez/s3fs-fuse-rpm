@@ -1,0 +1,134 @@
+From 71766039ff236682b78b3b959971f5b15c2f83a8 Mon Sep 17 00:00:00 2001
+From: Takeshi Nakatani <ggtakec@gmail.com>
+Date: Fri, 22 Mar 2019 10:47:42 +0000
+Subject: [PATCH] Support undefined CURLoption in libcurl library used in build
+
+---
+ configure.ac | 45 +++++++++++++++++++++++++++++++++++++++++++++
+ src/curl.cpp | 12 +++++++++---
+ src/curl.h   | 33 +++++++++++++++++++++++++++++++++
+ 3 files changed, 87 insertions(+), 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 86a2bc8b..2c76ff28 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -264,6 +264,51 @@ AC_COMPILE_IFELSE(
+   ]
+ )
+ 
++dnl ----------------------------------------------
++dnl check CURLoption
++dnl ----------------------------------------------
++dnl CURLOPT_TCP_KEEPALIVE (is supported by 7.25.0 and later)
++AC_MSG_CHECKING([checking CURLOPT_TCP_KEEPALIVE])
++AC_COMPILE_IFELSE(
++  [AC_LANG_PROGRAM([[#include <curl/curl.h>]],
++                   [[CURLoption opt = CURLOPT_TCP_KEEPALIVE;]])
++  ],
++  [AC_DEFINE(HAVE_CURLOPT_TCP_KEEPALIVE, 1, [Define to 1 if libcurl has CURLOPT_TCP_KEEPALIVE CURLoption])
++   AC_MSG_RESULT(yes)
++  ],
++  [AC_DEFINE(HAVE_CURLOPT_TCP_KEEPALIVE, 0, [Define to 1 if libcurl has CURLOPT_TCP_KEEPALIVE CURLoption])
++   AC_MSG_RESULT(no)
++  ]
++)
++
++dnl CURLOPT_SSL_ENABLE_ALPN (is supported by 7.36.0 and later)
++AC_MSG_CHECKING([checking CURLOPT_SSL_ENABLE_ALPN])
++AC_COMPILE_IFELSE(
++  [AC_LANG_PROGRAM([[#include <curl/curl.h>]],
++                   [[CURLoption opt = CURLOPT_SSL_ENABLE_ALPN;]])
++  ],
++  [AC_DEFINE(HAVE_CURLOPT_SSL_ENABLE_ALPN, 1, [Define to 1 if libcurl has CURLOPT_SSL_ENABLE_ALPN CURLoption])
++   AC_MSG_RESULT(yes)
++  ],
++  [AC_DEFINE(HAVE_CURLOPT_SSL_ENABLE_ALPN, 0, [Define to 1 if libcurl has CURLOPT_SSL_ENABLE_ALPN CURLoption])
++   AC_MSG_RESULT(no)
++  ]
++)
++
++dnl CURLOPT_KEEP_SENDING_ON_ERROR (is supported by 7.51.0 and later)
++AC_MSG_CHECKING([checking CURLOPT_KEEP_SENDING_ON_ERROR])
++AC_COMPILE_IFELSE(
++  [AC_LANG_PROGRAM([[#include <curl/curl.h>]],
++                   [[CURLoption opt = CURLOPT_KEEP_SENDING_ON_ERROR;]])
++  ],
++  [AC_DEFINE(HAVE_CURLOPT_KEEP_SENDING_ON_ERROR, 1, [Define to 1 if libcurl has CURLOPT_KEEP_SENDING_ON_ERROR CURLoption])
++   AC_MSG_RESULT(yes)
++  ],
++  [AC_DEFINE(HAVE_CURLOPT_KEEP_SENDING_ON_ERROR, 0, [Define to 1 if libcurl has CURLOPT_KEEP_SENDING_ON_ERROR CURLoption])
++   AC_MSG_RESULT(no)
++  ]
++)
++
+ dnl ----------------------------------------------
+ dnl output files
+ dnl ----------------------------------------------
+diff --git a/src/curl.cpp b/src/curl.cpp
+index 85412c85..1a1ee6db 100644
+--- a/src/curl.cpp
++++ b/src/curl.cpp
+@@ -1848,9 +1848,15 @@ bool S3fsCurl::ResetHandle()
+   curl_easy_setopt(hCurl, CURLOPT_PROGRESSFUNCTION, S3fsCurl::CurlProgress);
+   curl_easy_setopt(hCurl, CURLOPT_PROGRESSDATA, hCurl);
+   // curl_easy_setopt(hCurl, CURLOPT_FORBID_REUSE, 1);
+-  curl_easy_setopt(hCurl, CURLOPT_TCP_KEEPALIVE, 1);
+-  // curl_easy_setopt(hCurl, CURLOPT_KEEP_SENDING_ON_ERROR, 1);    // after 7.51.0
+-  // curl_easy_setopt(hCurl, CURLOPT_SSL_ENABLE_ALPN, 0);          // after 7.36.0 for disable ALPN for s3 server
++  if(CURLE_OK != curl_easy_setopt(hCurl, S3FS_CURLOPT_TCP_KEEPALIVE, 1)){
++    S3FS_PRN_WARN("The CURLOPT_TCP_KEEPALIVE option could not be set. For maximize performance you need to enable this option and you should use libcurl 7.25.0 or later.");
++  }
++  if(CURLE_OK != curl_easy_setopt(hCurl, S3FS_CURLOPT_SSL_ENABLE_ALPN, 0)){
++    S3FS_PRN_WARN("The CURLOPT_SSL_ENABLE_ALPN option could not be unset. S3 server does not support ALPN, then this option should be disabled to maximize performance. you need to use libcurl 7.36.0 or later.");
++  }
++  if(CURLE_OK != curl_easy_setopt(hCurl, S3FS_CURLOPT_KEEP_SENDING_ON_ERROR, 1)){
++    S3FS_PRN_WARN("The S3FS_CURLOPT_KEEP_SENDING_ON_ERROR option could not be set. For maximize performance you need to enable this option and you should use libcurl 7.51.0 or later.");
++  }
+ 
+   if(type != REQTYPE_IAMCRED && type != REQTYPE_IAMROLE){
+     // REQTYPE_IAMCRED and REQTYPE_IAMROLE are always HTTP
+diff --git a/src/curl.h b/src/curl.h
+index 34f09635..10c6937f 100644
+--- a/src/curl.h
++++ b/src/curl.h
+@@ -25,6 +25,39 @@
+ 
+ #include "psemaphore.h"
+ 
++//----------------------------------------------
++// Avoid dependency on libcurl version
++//----------------------------------------------
++// [NOTE]
++// The following symbols (enum) depend on the version of libcurl.
++//  CURLOPT_TCP_KEEPALIVE           7.25.0 and later
++//  CURLOPT_SSL_ENABLE_ALPN         7.36.0 and later
++//  CURLOPT_KEEP_SENDING_ON_ERROR   7.51.0 and later
++//
++// s3fs uses these, if you build s3fs with the old libcurl, 
++// substitute the following symbols to avoid errors.
++// If the version of libcurl linked at runtime is old,
++// curl_easy_setopt results in an error(CURLE_UNKNOWN_OPTION) and
++// a message is output.
++//
++#if defined(HAVE_CURLOPT_TCP_KEEPALIVE) && (HAVE_CURLOPT_TCP_KEEPALIVE == 1)
++  #define   S3FS_CURLOPT_TCP_KEEPALIVE          CURLOPT_TCP_KEEPALIVE
++#else
++  #define   S3FS_CURLOPT_TCP_KEEPALIVE          static_cast<CURLoption>(213)
++#endif
++
++#if defined(HAVE_CURLOPT_SSL_ENABLE_ALPN) && (HAVE_CURLOPT_SSL_ENABLE_ALPN == 1)
++  #define   S3FS_CURLOPT_SSL_ENABLE_ALPN        CURLOPT_SSL_ENABLE_ALPN
++#else
++  #define   S3FS_CURLOPT_SSL_ENABLE_ALPN        static_cast<CURLoption>(226)
++#endif
++
++#if defined(HAVE_CURLOPT_KEEP_SENDING_ON_ERROR) && (HAVE_CURLOPT_KEEP_SENDING_ON_ERROR == 1)
++  #define   S3FS_CURLOPT_KEEP_SENDING_ON_ERROR  CURLOPT_KEEP_SENDING_ON_ERROR
++#else
++  #define   S3FS_CURLOPT_KEEP_SENDING_ON_ERROR  static_cast<CURLoption>(245)
++#endif
++
+ //----------------------------------------------
+ // Symbols
+ //----------------------------------------------
