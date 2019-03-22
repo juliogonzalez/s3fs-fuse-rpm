@@ -68,6 +68,9 @@ cp -p %{SOURCE1} passwd-s3fs
 - Update to 1.85 from https://github.com/s3fs-fuse/s3fs-fuse
   Full changelog: https://github.com/s3fs-fuse/s3fs-fuse/releases/tag/v1.85
 
+* Sat Feb 02 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1.84-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
 * Sun Oct 14 2018 Julio Gonzalez Gil <git@juliogonzalez.es> - 1.84-3
 - Require fuse package on runtime to allow mounting with systemd,
   mount command or /etc/fstab (#1637669)
