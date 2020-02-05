@@ -2,7 +2,7 @@
 %{!?make_build: %global make_build %{__make} %{?_smp_mflags}}
 
 Name:           s3fs-fuse
-Version:        1.85
+Version:        1.86
 
 Release:        1%{?dist}
 Summary:        FUSE-based file system backed by Amazon S3
@@ -11,8 +11,6 @@ License:        GPLv2+
 URL:            https://github.com/s3fs-fuse/s3fs-fuse
 Source0:        https://github.com/s3fs-fuse/s3fs-fuse/archive/v%{version}/%{name}-%{version}.tar.gz
 Source1:        passwd-s3fs
-Patch0:         985-fix-cross-building.patch
-Patch1:         987-support-curl-lt-7-25.patch
 
 # s3fs-fuse requires at least fuse 2.8.4, which is not available for
 # CentOS/RHEL6
@@ -60,6 +58,19 @@ cp -p %{SOURCE1} passwd-s3fs
 %license COPYING
 
 %changelog
+* Wed Feb 05 2020 Julio Gonzalez Gil <git@juliogonzalez.es> - 1.86-1
+- Update to 1.86 from https://github.com/s3fs-fuse/s3fs-fuse (#1798716)
+  Full changelog: https://github.com/s3fs-fuse/s3fs-fuse/releases/tag/v1.86
+- Removed:
+  * 985-fix-cross-building.patch
+  * 987-support-curl-lt-7-25.patch
+
+* Thu Jan 30 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1.85-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
+* Fri Jul 26 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1.85-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
 * Tue Mar 12 2019 Julio Gonzalez Gil <git@juliogonzalez.es> - 1.85-1
 - Fix cross building (https://github.com/s3fs-fuse/s3fs-fuse/pull/985)
   * 985-fix-cross-building.patch

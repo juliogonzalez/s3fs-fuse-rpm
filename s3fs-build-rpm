@@ -13,7 +13,7 @@ if [ ! -f "${TARBALL}" ]; then
   fi
 fi
 echo "### Building RPMs..."
-rpmbuild --quiet --define "_topdir `pwd`" -ba "${SPEC}"
+rpmbuild --define "_topdir `pwd`" -ba "${SPEC}"
 if [ $? -eq 0 ]; then
   echo "### Binary RPMs available at ${PWD}/RPMS"
   echo "### Source RPMs available at ${PWD}/SRPMS"
