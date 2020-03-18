@@ -4,7 +4,7 @@
 Name:           s3fs-fuse
 Version:        1.86
 
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        FUSE-based file system backed by Amazon S3
 
 License:        GPLv2+
@@ -18,6 +18,8 @@ Source1:        passwd-s3fs
 Requires:       fuse-libs >= 2.8.4
 # Fuse is required to be able to use mount command, /etc/fstab or mount via systemd
 Requires:       fuse >= 2.8.4
+# To identify the mime-types
+Requires:       mailcap
 BuildRequires:  automake
 BuildRequires:  gcc-c++
 BuildRequires:  make
@@ -58,6 +60,11 @@ cp -p %{SOURCE1} passwd-s3fs
 %license COPYING
 
 %changelog
+* Wed Mar 18 2020 Julio Gonzalez Gil <packages@juliogonzalez.es> - 1.86-2
+- Add mailcap dependency removed at 1.84-2. as it is in fact a runtime
+  dependency to take care of mime-types on upload
+  https://github.com/s3fs-fuse/s3fs-fuse/issues/1217
+
 * Wed Feb 05 2020 Julio Gonzalez Gil <git@juliogonzalez.es> - 1.86-1
 - Update to 1.86 from https://github.com/s3fs-fuse/s3fs-fuse (#1798716)
   Full changelog: https://github.com/s3fs-fuse/s3fs-fuse/releases/tag/v1.86
