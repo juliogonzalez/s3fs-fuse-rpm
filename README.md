@@ -25,7 +25,12 @@ Based off the [spec file](http://kad.fedorapeople.org/packages/s3fs/s3fs.spec) c
 
 Includes scripts to create RPMs for fuse-2.8.5 if needed.
 
-Tested on x64 CentOS 6.9, CentOS 7.3 and Amazon Linux 2017.03
+Tested on x64 CentOS 6, CentOS 7 and Amazon Linux 2017.03
+
+Source for Fedora and EPEL
+--------------------------
+
+As of today, the SPEC in this repository is exactly the same that is then pushed to the [Fedora Project](https://src.fedoraproject.org/rpms/s3fs-fuse/) to generate the [submissions to Fedora and EPEL](https://bodhi.fedoraproject.org/updates/?packages=s3fs-fuse)
 
 
 Build Requirements
