@@ -2,9 +2,9 @@
 %{!?make_build: %global make_build %{__make} %{?_smp_mflags}}
 
 Name:           s3fs-fuse
-Version:        1.86
+Version:        1.87
 
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        FUSE-based file system backed by Amazon S3
 
 License:        GPLv2+
@@ -60,6 +60,13 @@ cp -p %{SOURCE1} passwd-s3fs
 %license COPYING
 
 %changelog
+* Mon Aug 10 2020 Julio Gonzalez Gil <packages@juliogonzalez.es> - 1.87-1
+- Update to 1.87 from https://github.com/s3fs-fuse/s3fs-fuse (#1867722)
+  Full changelog: https://github.com/s3fs-fuse/s3fs-fuse/releases/tag/v1.87
+
+* Wed Jul 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1.86-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
 * Wed Mar 18 2020 Julio Gonzalez Gil <packages@juliogonzalez.es> - 1.86-2
 - Add mailcap dependency removed at 1.84-2. as it is in fact a runtime
   dependency to take care of mime-types on upload
