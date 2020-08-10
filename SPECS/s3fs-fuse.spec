@@ -12,9 +12,6 @@ URL:            https://github.com/s3fs-fuse/s3fs-fuse
 Source0:        https://github.com/s3fs-fuse/s3fs-fuse/archive/v%{version}/%{name}-%{version}.tar.gz
 Source1:        passwd-s3fs
 
-# s3fs-fuse requires at least fuse 2.8.4, which is not available for
-# CentOS/RHEL6
-# See https://github.com/s3fs-fuse/s3fs-fuse/issues/42
 Requires:       fuse-libs >= 2.8.4
 # Fuse is required to be able to use mount command, /etc/fstab or mount via systemd
 Requires:       fuse >= 2.8.4

@@ -6,7 +6,7 @@ LANG=en_EN
 SCRIPT=$(basename ${0})
 
 # Supported distributions
-SUPPORTEDDISTROS="centos6 centos7 amazon2017.03"
+SUPPORTEDDISTROS="centos7 amazon2017.03"
 
 # Allocate tty by default
 TTY='-t'
