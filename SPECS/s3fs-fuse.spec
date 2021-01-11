@@ -2,7 +2,7 @@
 %{!?make_build: %global make_build %{__make} %{?_smp_mflags}}
 
 Name:           s3fs-fuse
-Version:        1.87
+Version:        1.88
 
 Release:        1%{?dist}
 Summary:        FUSE-based file system backed by Amazon S3
@@ -57,6 +57,10 @@ cp -p %{SOURCE1} passwd-s3fs
 %license COPYING
 
 %changelog
+* Mon Jan 11 2021 Julio González Gil <packages@juliogonzalez.es> - 1.88-1
+- Update to 1.88 from https://github.com/s3fs-fuse/s3fs-fuse (#1914881)
+  Full changelog: https://github.com/s3fs-fuse/s3fs-fuse/releases/tag/v1.88
+
 * Mon Aug 10 2020 Julio Gonzalez Gil <packages@juliogonzalez.es> - 1.87-1
 - Update to 1.87 from https://github.com/s3fs-fuse/s3fs-fuse (#1867722)
   Full changelog: https://github.com/s3fs-fuse/s3fs-fuse/releases/tag/v1.87
