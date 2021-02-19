@@ -31,8 +31,8 @@ Conflicts:      fuse-s3fs
 %description
 s3fs is a FUSE file system that allows you to mount an Amazon S3 bucket as a
 local file system. It stores files natively and transparently in S3 (i.e.,
-you can use other programs to access the same files). Maximum file size=64GB
-(limited by s3fs, not Amazon).
+you can use other programs to access the same files). Maximum file size is
+5 TB when using multipart upload.
 
 s3fs is stable and is being used in number of production environments, e.g.,
 rsync backup to s3.
