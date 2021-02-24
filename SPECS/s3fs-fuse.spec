@@ -2,9 +2,9 @@
 %{!?make_build: %global make_build %{__make} %{?_smp_mflags}}
 
 Name:           s3fs-fuse
-Version:        1.88
+Version:        1.89
 
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        FUSE-based file system backed by Amazon S3
 
 License:        GPLv2+
@@ -57,6 +57,10 @@ cp -p %{SOURCE1} passwd-s3fs
 %license COPYING
 
 %changelog
+* Wed Feb 24 2021 Julio González Gil <packages@juliogonzalez.es> - 1.89-1
+- Update to 1.89 from https://github.com/s3fs-fuse/s3fs-fuse (#1932107)
+  Full changelog: https://github.com/s3fs-fuse/s3fs-fuse/releases/tag/v1.89
+
 * Wed Jan 27 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1.88-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
