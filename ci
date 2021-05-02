@@ -6,7 +6,7 @@ LANG=en_EN
 SCRIPT=$(basename ${0})
 
 # Supported distributions
-SUPPORTEDDISTROS="centos7 amazon2017.03"
+SUPPORTEDDISTROS="centos7 centos8 amazonlinux2018.03 amazonlinux2"
 
 # Allocate tty by default
 TTY='-t'
@@ -100,12 +100,12 @@ done
 
 # Check distribution
 case "${DISTRO}" in
-  centos6)       DOCKER_IMAGE='centos:centos6'
-                 BUILD_FUSE='TRUE' ;;
-  centos7)       DOCKER_IMAGE='centos:centos7' ;;
-  amazon2017.03) DOCKER_IMAGE='amazonlinux:2017.03' ;;
-  *)             print_error_unsupported_distro
-                 exit 1;;
+  centos7)            DOCKER_IMAGE='centos:centos7' ;;
+  centos8)            DOCKER_IMAGE='centos:centos8' ;;
+  amazonlinux2018.03) DOCKER_IMAGE='amazonlinux:2018.03' ;;
+  amazonlinux2)       DOCKER_IMAGE='amazonlinux:2' ;;
+  *)                  print_error_unsupported_distro
+                      exit 1;;
 esac
 
 # Check name
@@ -120,26 +120,13 @@ docker_run "${CONTAINER_NAME}" "./clean"
 print_info "Installing required dependencies..."
 docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install automake make git rpm-build pkgconfig" # Common dependencies
 docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install gcc-c++ libcurl-devel libxml2-devel openssl-devel" # s3fs dependencies
-if [ "${DISTRO}" == "centos6" ]; then
-  docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install epel-release" # Install EPEL repository
-  docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install epel-rpm-macros" # Install epel-rpm-macros, required for macros not available by default
-fi
 docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install initscripts kernel mailcap openssl" # Other dependencies only needed at docker
 print_info "Configuring user ci..."
 docker_run "${CONTAINER_NAME}" "/usr/sbin/groupadd -g $(id -g) ci"
 docker_run "${CONTAINER_NAME}" "/usr/sbin/useradd -m -d /home/ci -u ${UID} -g $(id -g) ci"
 docker_run "${CONTAINER_NAME}" "/bin/chown ci:ci /home/ci"
-if [ ! -z ${BUILD_FUSE} ]; then
-  print_info "Installing fuse build dependencies..."
-  docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install gcc libselinux-devel libtool gettext-devel kernel-devel" # fuse dependencies
-  print_info "Building fuse (required by ${DISTRO})..."
-  docker_run "${CONTAINER_NAME}" "./fuse-rpm" "ci"
-  print_info "Installing fuse..."
-  docker_run "${CONTAINER_NAME}" "/bin/rpm -i RPMS/$HOSTTYPE/fuse-2.8.5-99.vitki.03.*.$HOSTTYPE.rpm RPMS/$HOSTTYPE/fuse-devel-2.8.5-99.vitki.03.*.$HOSTTYPE.rpm RPMS/$HOSTTYPE/fuse-libs-2.8.5-99.vitki.03.*.$HOSTTYPE.rpm"
-else
-  print_info "Installing fuse..."
-  docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install fuse fuse-libs fuse-devel" # fuse
-fi
+print_info "Installing fuse..."
+docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install fuse fuse-libs fuse-devel" # fuse
 print_info "Building s3fs-fuse package..."
 docker_run "${CONTAINER_NAME}" "./s3fs-build-rpm" "ci"
 print_info "Installing s3fs-fuse package..."
