@@ -6,7 +6,7 @@ LANG=en_EN
 SCRIPT=$(basename ${0})
 
 # Supported distributions
-SUPPORTEDDISTROS="centos7 centos8 amazonlinux2018.03 amazonlinux2"
+SUPPORTEDDISTROS="centos7 rockylinux8 amazonlinux2018.03 amazonlinux2"
 
 # Allocate tty by default
 TTY='-t'
@@ -101,7 +101,7 @@ done
 # Check distribution
 case "${DISTRO}" in
   centos7)            DOCKER_IMAGE='centos:centos7' ;;
-  centos8)            DOCKER_IMAGE='centos:centos8' ;;
+  rockylinux8)        DOCKER_IMAGE='rockylinux:8' ;;
   amazonlinux2018.03) DOCKER_IMAGE='amazonlinux:2018.03' ;;
   amazonlinux2)       DOCKER_IMAGE='amazonlinux:2' ;;
   *)                  print_error_unsupported_distro
