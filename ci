@@ -8,6 +8,12 @@ SCRIPT=$(basename ${0})
 # Supported distributions
 SUPPORTEDDISTROS="centos7 rockylinux8 amazonlinux2018.03 amazonlinux2"
 
+# Use podman by default as container engine
+CENGINE='podman'
+
+# Default registry
+REGISTRY='docker.io'
+
 # Allocate tty by default
 TTY='-t'
 
@@ -49,12 +55,15 @@ print_help() {
   echo "                          If undefined, container name will be"
   echo "                          s3fs-fuse-rpm-<DISTRO>-<TIMESTAMP>"
   echo "  --remove-on-error If present, remove the container on errors"
-  echo "  --notty           If present, does not allocate a tty for docker"
+  echo "  --notty           If present, does not allocate a tty for the container"
+  echo "  --docker          Use docker instead of podman"
+  echo "  --registry=<REGISTRY> Specify an image registry. If absent, docker.io"
+  echo "                       will be used by default"
   echo ""
 }
 
 remove_container() {
-  docker container rm -f ${1}
+  ${CENGINE} container rm -f ${1}
 }
 
 exit_error() {
@@ -67,17 +76,17 @@ exit_error() {
   fi
 }
 
-docker_run() {
+container_run() {
   if [ ! -z ${3} ]; then
     local COMMAND_USER="-u ${3}"
   fi
-  local COMMAND="docker container exec -i ${TTY} ${COMMAND_USER} ${1} ${2}"
+  local COMMAND="${CENGINE} container exec -i ${TTY} ${COMMAND_USER} ${1} ${2}"
   ${COMMAND}
   exit_error ${?}
 }
 
 # read the options
-ARGS=$(getopt -o h --long help,remove-on-error,notty,distro:,name: -n "${SCRIPT}" -- "$@")
+ARGS=$(getopt -o h --long help,remove-on-error,notty,distro:,name:,docker:,registry: -n "${SCRIPT}" -- "$@")
 if [ $? -ne 0 ];
 then
   print_incorrect_syntax
@@ -93,6 +102,8 @@ while true ; do
     --notty)           TTY=""; shift 1 ;;
     --distro)          DISTRO="${2}"; shift 2;;
     --name)            CONTAINER_NAME="${2}"; shift 2;;
+    --docker)          CENGINE='docker'; shift 1;;
+    --registry)        REGISTRY="${2}"; shift 2;;
     --)                shift ; break ;;
     *)                 print_incorrect_syntax; exit 1;;
   esac
@@ -100,10 +111,10 @@ done
 
 # Check distribution
 case "${DISTRO}" in
-  centos7)            DOCKER_IMAGE='centos:centos7' ;;
-  rockylinux8)        DOCKER_IMAGE='rockylinux:8' ;;
-  amazonlinux2018.03) DOCKER_IMAGE='amazonlinux:2018.03' ;;
-  amazonlinux2)       DOCKER_IMAGE='amazonlinux:2' ;;
+  centos7)            CONTAINER_IMAGE="${REGISTRY}/centos:centos7" ;;
+  rockylinux8)        CONTAINER_IMAGE="${REGISTRY}/rockylinux:8" ;;
+  amazonlinux2018.03) CONTAINER_IMAGE="${REGISTRY}/amazonlinux:2018.03" ;;
+  amazonlinux2)       CONTAINER_IMAGE="${REGISTRY}/amazonlinux:2" ;;
   *)                  print_error_unsupported_distro
                       exit 1;;
 esac
@@ -113,25 +124,31 @@ if [ -z ${CONTAINER_NAME} ]; then
   CONTAINER_NAME="s3fs-fuse-rpm-${DISTRO}-$(date +'%s')"
 fi
 
+if [ "${CENGINE}" == "podman" ]; then
+  EXTRA_FLAGS="--userns=keep-id"
+fi
+
 print_info "Starting container ${CONTAINER_NAME}..."
-docker container run -i ${TTY} --name "${CONTAINER_NAME}" -v ${PWD}:/tmp/s3fs-fuse-rpm --cap-add SYS_ADMIN --device /dev/fuse -w /tmp/s3fs-fuse-rpm -d ${DOCKER_IMAGE} /bin/bash -c 'while [ 1 -eq 1 ]; do sleep 60; done'
+${CENGINE} container run -i ${TTY} --name "${CONTAINER_NAME}" -v ${PWD}:/tmp/s3fs-fuse-rpm --cap-add SYS_ADMIN --device /dev/fuse -w /tmp/s3fs-fuse-rpm -d ${EXTRA_FLAGS} ${CONTAINER_IMAGE} /bin/bash -c 'while [ 1 -eq 1 ]; do sleep 60; done'
 print_info "Cleaning up"
-docker_run "${CONTAINER_NAME}" "./clean"
+container_run "${CONTAINER_NAME}" "./clean"
 print_info "Installing required dependencies..."
-docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install automake make git rpm-build pkgconfig" # Common dependencies
-docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install gcc-c++ libcurl-devel libxml2-devel openssl-devel" # s3fs dependencies
-docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install initscripts kernel mailcap openssl" # Other dependencies only needed at docker
-print_info "Configuring user ci..."
-docker_run "${CONTAINER_NAME}" "/usr/sbin/groupadd -g $(id -g) ci"
-docker_run "${CONTAINER_NAME}" "/usr/sbin/useradd -m -d /home/ci -u ${UID} -g $(id -g) ci"
-docker_run "${CONTAINER_NAME}" "/bin/chown ci:ci /home/ci"
+container_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install automake make git rpm-build pkgconfig" "root" # Common dependencies
+container_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install gcc-c++ libcurl-devel libxml2-devel openssl-devel" "root"  # s3fs dependencies
+container_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install initscripts kernel mailcap openssl" "root" # Other dependencies only needed for containers
+if [ "${CENGINE}" == "docker" ]; then
+  print_info "Configuring user ci..."
+  container_run "${CONTAINER_NAME}" "/usr/sbin/groupadd -g $(id -g) ${USER}" "root"
+  container_run "${CONTAINER_NAME}" "/usr/sbin/useradd -m -d /home/${USER} -u ${UID} -g $(id -g) ${USER}" "root"
+  container_run "${CONTAINER_NAME}" "/bin/chown ci:ci /home/${USER}" "root"
+fi
 print_info "Installing fuse..."
-docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install fuse fuse-libs fuse-devel" # fuse
+container_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install fuse fuse-libs fuse-devel" "root" # fuse
 print_info "Building s3fs-fuse package..."
-docker_run "${CONTAINER_NAME}" "./s3fs-build-rpm" "ci"
+container_run "${CONTAINER_NAME}" "./s3fs-build-rpm" "${USER}"
 print_info "Installing s3fs-fuse package..."
-docker_run "${CONTAINER_NAME}" "/bin/rpm -e fuse-devel"
-docker_run "${CONTAINER_NAME}" "/bin/rpm -i RPMS/$HOSTTYPE/s3fs-fuse-*.*.$HOSTTYPE.rpm"
+container_run "${CONTAINER_NAME}" "/bin/rpm -e fuse-devel" "root"
+container_run "${CONTAINER_NAME}" "/bin/rpm -i RPMS/$HOSTTYPE/s3fs-fuse-*.*.$HOSTTYPE.rpm" "root"
 print_info "Removing container..."
 remove_container ${CONTAINER_NAME}
 print_ok "Everything OK"
