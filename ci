@@ -133,8 +133,7 @@ ${CENGINE} container run -i ${TTY} --name "${CONTAINER_NAME}" -v ${PWD}:/tmp/s3f
 print_info "Cleaning up"
 container_run "${CONTAINER_NAME}" "./clean"
 print_info "Installing required dependencies..."
-container_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install automake make git rpm-build pkgconfig" "root" # Common dependencies
-container_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install gcc-c++ libcurl-devel libxml2-devel openssl-devel" "root"  # s3fs dependencies
+container_run "${CONTAINER_NAME}" "./install-buildrequires" "root" # Build Dependencies
 container_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install initscripts kernel mailcap openssl" "root" # Other dependencies only needed for containers
 if [ "${CENGINE}" == "docker" ]; then
   print_info "Configuring user ci..."

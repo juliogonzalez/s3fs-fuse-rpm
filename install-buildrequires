@@ -1,0 +1,24 @@
+#!/bin/bash -e
+if [ ${UID} -ne 0 ]; then
+  echo "You need to run this script as root (or with sudo)"
+  exit 1
+fi
+
+if [ -f /usr/bin/dnf ]; then
+  INSTALLER="/usr/bin/dnf install -y"
+elif [ -f /usr/bin/yum ]; then
+  INSTALLER="/usr/bin/yum install -y"
+else
+  echo "Neither /usr/bin/dnf or /usr/bin/yum were found!"
+  echo "This OS seems to be incompatible with the list of supported OS"
+  exit 1
+fi
+
+# Required for rpmspec
+${INSTALLER} "rpm-build"
+
+# Install dependencies
+DEPENDENCIES=$(/usr/bin/rpmspec -q --srpm --requires SPECS/s3fs-fuse.spec)
+while read -r DEPENDENCY; do
+  ${INSTALLER} "${DEPENDENCY}"
+done <<< "$DEPENDENCIES"
