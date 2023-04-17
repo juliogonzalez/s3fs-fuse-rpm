@@ -1,0 +1,1 @@
+../SPECS/s3fs-fuse.spec
