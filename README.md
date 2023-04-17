@@ -50,6 +50,8 @@ Build Requirements
 * pkgconfig
 * rpm-build
 
+You can install the build requirements by calling the script `install-buildrequires` as root.
+
 Building fresh RPMs
 -------------------
 
