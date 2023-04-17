@@ -12,7 +12,7 @@ s3fs-fuse
     </td>
   </tr>
   <tr>
-    <td>COPR RPM Builds<br />(Fedora and EPEL7)</td>
+    <td>COPR RPM Builds<br />(Fedora/EPEL/CentOS Stream/RHEL/Amazon Linux)</td>
     <td>
       <a href="https://copr.fedorainfracloud.org/coprs/juliogonzalez/s3fs-fuse/monitor/" target="_blank"><img src="https://copr.fedorainfracloud.org/coprs/juliogonzalez/s3fs-fuse/package/s3fs-fuse/status_image/last_build.png" alt="RPM Build status" valign="middle" /></a>
     </td>
