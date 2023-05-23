@@ -2,9 +2,9 @@
 %{!?make_build: %global make_build %{__make} %{?_smp_mflags}}
 
 Name:           s3fs-fuse
-Version:        1.91
+Version:        1.92
 
-Release:        4%{?dist}
+Release:        1%{?dist}
 Summary:        FUSE-based file system backed by Amazon S3
 
 License:        GPL-2.0-or-later
@@ -57,6 +57,10 @@ cp -p %{SOURCE1} passwd-s3fs
 %license COPYING
 
 %changelog
+* Wed May 23 2023 Julio González Gil <packages@juliogonzalez.es> - 1.92-1
+- Update to 1.92 from https://github.com/s3fs-fuse/s3fs-fuse (#2209081)
+  Full changelog: https://github.com/s3fs-fuse/s3fs-fuse/releases/tag/v1.92
+
 * Mon Apr 17 2023 Julio González Gil <packages@juliogonzalez.es> - 1.91-4
 - Adjust the License tag to a valid SPDX expression
 
