@@ -57,7 +57,7 @@ cp -p %{SOURCE1} passwd-s3fs
 %license COPYING
 
 %changelog
-* Wed May 23 2023 Julio González Gil <packages@juliogonzalez.es> - 1.92-1
+* Tue May 23 2023 Julio González Gil <packages@juliogonzalez.es> - 1.92-1
 - Update to 1.92 from https://github.com/s3fs-fuse/s3fs-fuse (#2209081)
   Full changelog: https://github.com/s3fs-fuse/s3fs-fuse/releases/tag/v1.92
 
