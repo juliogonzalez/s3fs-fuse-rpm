@@ -1,6 +1,8 @@
 s3fs-fuse
 =========
 
+If you find this repository useful, you can [Buy me a beer](https://www.buymeacoffee.com/juliogonzalez) 🍺
+
 <table padding="0">
   <tr>
     <th colspan="2">Statuses</th>
@@ -22,7 +24,6 @@ s3fs-fuse
 Script to generate RPMs for s3fs <https://github.com/s3fs-fuse/s3fs-fuse>
 
 Based off the [spec file](http://kad.fedorapeople.org/packages/s3fs/s3fs.spec) created by [Jorge A Gallegos](http://kad.fedorapeople.org/), referenced at <https://bugzilla.redhat.com/show_bug.cgi?id=725292>, and upgraded by [Corey Gilmore](https://github.com/cfg), refered at <https://github.com/cfg/s3fs>
-
 
 Tested on x64 CentOS 7, AlmaLinux 8, Amazon Linux 2018.03 and Amazon Linux 2. Should also work for other versions, Rocky Linux, Oracle and similar.
 
