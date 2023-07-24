@@ -71,4 +71,4 @@ Build the RPMs:
 
 And install:
 
-    rpm -Uvh RPMS/$HOSTTYPE/s3fs-fuse-1.92-1.*.$HOSTTYPE.rpm
+    rpm -Uvh RPMS/$HOSTTYPE/s3fs-fuse-1.93-1.*.$HOSTTYPE.rpm
