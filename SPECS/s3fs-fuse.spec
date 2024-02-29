@@ -60,6 +60,9 @@ cp -p %{SOURCE1} passwd-s3fs
 * Thu Feb 29 2024 Julio González Gil <packages@juliogonzalez.es> - 1.94-1
 - Update to 1.94 from https://github.com/s3fs-fuse/s3fs-fuse/releases/tag/v1.94 (#2265969)
 
+* Sat Jan 27 2024 Fedora Release Engineering <releng@fedoraproject.org> - 1.93-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
+
 * Tue Jul 25 2023 Julio González Gil <packages@juliogonzalez.es> - 1.93-1
 - Update to 1.93 from https://github.com/s3fs-fuse/s3fs-fuse (#2209081)
 
