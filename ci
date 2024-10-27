@@ -6,7 +6,7 @@ LANG=en_EN
 SCRIPT=$(basename ${0})
 
 # Supported distributions
-SUPPORTEDDISTROS="centos7 rockylinux8 amazonlinux2018.03 amazonlinux2"
+SUPPORTEDDISTROS="centos7 rockylinux8 amazonlinux2018.03 amazonlinux2 amazonlinux2023"
 
 # Use podman by default as container engine
 CENGINE='podman'
@@ -115,6 +115,7 @@ case "${DISTRO}" in
   rockylinux8)        CONTAINER_IMAGE="${REGISTRY}/rockylinux:8" ;;
   amazonlinux2018.03) CONTAINER_IMAGE="${REGISTRY}/amazonlinux:2018.03" ;;
   amazonlinux2)       CONTAINER_IMAGE="${REGISTRY}/amazonlinux:2" ;;
+  amazonlinux2023)    CONTAINER_IMAGE="${REGISTRY}/amazonlinux:2023" ;;
   *)                  print_error_unsupported_distro
                       exit 1;;
 esac

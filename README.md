@@ -25,7 +25,7 @@ Script to generate RPMs for s3fs <https://github.com/s3fs-fuse/s3fs-fuse>
 
 Based off the [spec file](http://kad.fedorapeople.org/packages/s3fs/s3fs.spec) created by [Jorge A Gallegos](http://kad.fedorapeople.org/), referenced at <https://bugzilla.redhat.com/show_bug.cgi?id=725292>, and upgraded by [Corey Gilmore](https://github.com/cfg), refered at <https://github.com/cfg/s3fs>
 
-Tested on x64 CentOS 7, AlmaLinux 8, Amazon Linux 2018.03 and Amazon Linux 2. Should also work for other versions, Rocky Linux, Oracle and similar.
+Tested on x64 CentOS 7, AlmaLinux 8, Amazon Linux 2018.03, Amazon Linux 2, and Amazon Linux 2023. Should also work for other versions, Rocky Linux, Oracle and similar.
 
 **WARNING**: CentOS6/RHEL6 are **not** supported since s3fs v1.87 as discussed at https://github.com/s3fs-fuse/s3fs-fuse/issues/1354 If you still want to use s3fs, use [v1.86-2](https://github.com/juliogonzalez/s3fs-fuse-rpm/releases/tag/1.86-2)
 
