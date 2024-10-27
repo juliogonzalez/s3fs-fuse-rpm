@@ -129,9 +129,17 @@ if [ "${CENGINE}" == "podman" ]; then
 fi
 
 print_info "Starting container ${CONTAINER_NAME}..."
-${CENGINE} container run -i ${TTY} --name "${CONTAINER_NAME}" -v ${PWD}:/tmp/s3fs-fuse-rpm --cap-add SYS_ADMIN --device /dev/fuse -w /tmp/s3fs-fuse-rpm -d ${EXTRA_FLAGS} ${CONTAINER_IMAGE} /bin/bash -c 'while [ 1 -eq 1 ]; do sleep 60; done'
+${CENGINE} container run -i ${TTY} --name "${CONTAINER_NAME}" -v ${PWD}:/tmp/s3fs-fuse-rpm:Z --cap-add SYS_ADMIN --device /dev/fuse -w /tmp/s3fs-fuse-rpm -d ${EXTRA_FLAGS} ${CONTAINER_IMAGE} /bin/bash -c 'while [ 1 -eq 1 ]; do sleep 60; done'
 print_info "Cleaning up"
 container_run "${CONTAINER_NAME}" "./clean"
+if [ "${DISTRO}" == "centos7" ]; then
+  print_info "Adjusting CentOS7 repositories to use the vault..."
+  mkdir ${PWD}/${CONTAINER_NAME}/
+  podman cp ${CONTAINER_NAME}:/etc/yum.repos.d/ ${PWD}/${CONTAINER_NAME}/
+  sed -i -e '/^mirrorlist/d;/^#baseurl=/{s,^#,,;s,/mirror,/vault,;}' ${PWD}/${CONTAINER_NAME}/yum.repos.d/CentOS*.repo
+  podman cp ${PWD}/${CONTAINER_NAME}/yum.repos.d/ ${CONTAINER_NAME}:/etc/
+  rm -rf ${PWD}/${CONTAINER_NAME}/
+fi
 print_info "Installing required dependencies..."
 container_run "${CONTAINER_NAME}" "./install-buildrequires" "root" # Build Dependencies
 container_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install initscripts kernel mailcap openssl" "root" # Other dependencies only needed for containers
