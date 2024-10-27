@@ -143,7 +143,7 @@ if [ "${DISTRO}" == "centos7" ]; then
 fi
 print_info "Installing required dependencies..."
 container_run "${CONTAINER_NAME}" "./install-buildrequires" "root" # Build Dependencies
-container_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install initscripts kernel mailcap openssl" "root" # Other dependencies only needed for containers
+container_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install initscripts kernel mailcap openssl grep" "root" # Other dependencies only needed for containers
 if [ "${CENGINE}" == "docker" ]; then
   print_info "Configuring user ci..."
   container_run "${CONTAINER_NAME}" "/usr/sbin/groupadd -g $(id -g) ${USER}" "root"
@@ -157,6 +157,8 @@ container_run "${CONTAINER_NAME}" "./s3fs-build-rpm" "${USER}"
 print_info "Installing s3fs-fuse package..."
 container_run "${CONTAINER_NAME}" "/bin/rpm -e fuse-devel" "root"
 container_run "${CONTAINER_NAME}" "/bin/rpm -i RPMS/$HOSTTYPE/s3fs-fuse-*.*.$HOSTTYPE.rpm" "root"
+print_info "Removing s3fs-fuse package..."
+container_run "${CONTAINER_NAME}" "/bin/rpm -e s3fs-fuse" "root"
 print_info "Removing container..."
 remove_container ${CONTAINER_NAME}
 print_ok "Everything OK"
