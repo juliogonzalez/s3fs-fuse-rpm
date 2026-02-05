@@ -8,7 +8,7 @@ If you find this repository useful, you can [Buy me a beer](https://www.buymeaco
     <th colspan="2">Statuses</th>
   </tr>
   <tr>
-    <td>Tests and RPM Builds<br />(CentOS7, Rocky Linux 8, Amazon Linux 2018.03, Amazon Linux 2)</td>
+    <td>Tests and RPM Builds<br />(Rocky Linux 8, Amazon Linux 2023)</td>
     <td>
       <a href="https://jenkins.juliogonzalez.es/job/s3fs-fuse-rpm-build/" target="_blank"><img src="https://jenkins.juliogonzalez.es/job/s3fs-fuse-rpm-build/badge/icon" alt="Test status" valign="middle" /></a>
     </td>
@@ -41,9 +41,9 @@ Build Requirements
 * automake
 * curl
 * make
-* fuse-devel (>= 2.8.4)
+* fuse3-devel
 * git (to clone this repository, not needed if you download a tarball from the [releases](https://github.com/juliogonzalez/s3fs-fuse-rpm/releases))
-* gcc-c++
+* gcc-c++ >= 6.1.0
 * libcurl-devel
 * libxml2-devel
 * make
@@ -71,4 +71,4 @@ Build the RPMs:
 
 And install:
 
-    rpm -Uvh RPMS/$HOSTTYPE/s3fs-fuse-1.94-1.*.$HOSTTYPE.rpm
+    rpm -Uvh RPMS/$HOSTTYPE/s3fs-fuse-1.97-1.*.$HOSTTYPE.rpm

@@ -150,12 +150,12 @@ if [ "${CENGINE}" == "docker" ]; then
   container_run "${CONTAINER_NAME}" "/usr/sbin/useradd -m -d /home/${USER} -u ${UID} -g $(id -g) ${USER}" "root"
   container_run "${CONTAINER_NAME}" "/bin/chown ci:ci /home/${USER}" "root"
 fi
-print_info "Installing fuse..."
-container_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install fuse fuse-libs fuse-devel" "root" # fuse
+print_info "Installing fuse3..."
+container_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install fuse3 fuse3-libs fuse3-devel" "root" # fuse
 print_info "Building s3fs-fuse package..."
 container_run "${CONTAINER_NAME}" "./s3fs-build-rpm" "${USER}"
 print_info "Installing s3fs-fuse package..."
-container_run "${CONTAINER_NAME}" "/bin/rpm -e fuse-devel" "root"
+container_run "${CONTAINER_NAME}" "/bin/rpm -e fuse3-devel" "root"
 container_run "${CONTAINER_NAME}" "/bin/rpm -i RPMS/$HOSTTYPE/s3fs-fuse-*.*.$HOSTTYPE.rpm" "root"
 print_info "Removing s3fs-fuse package..."
 container_run "${CONTAINER_NAME}" "/bin/rpm -e s3fs-fuse" "root"
