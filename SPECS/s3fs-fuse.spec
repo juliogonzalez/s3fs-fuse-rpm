@@ -2,7 +2,7 @@
 %{!?make_build: %global make_build %{__make} %{?_smp_mflags}}
 
 Name:           s3fs-fuse
-Version:        1.95
+Version:        1.97
 
 Release:        1%{?dist}
 Summary:        FUSE-based file system backed by Amazon S3
@@ -12,16 +12,16 @@ URL:            https://github.com/s3fs-fuse/s3fs-fuse
 Source0:        https://github.com/s3fs-fuse/s3fs-fuse/archive/v%{version}/%{name}-%{version}.tar.gz
 Source1:        passwd-s3fs
 
-Requires:       fuse-libs >= 2.8.4
+Requires:       fuse3-libs
 # Fuse is required to be able to use mount command, /etc/fstab or mount via systemd
-Requires:       fuse >= 2.8.4
+Requires:       fuse3
 # To identify the mime-types
 Requires:       mailcap
 BuildRequires:  automake
-BuildRequires:  gcc-c++
+BuildRequires:  gcc-c++ >= 6.1.0
 BuildRequires:  make
 BuildRequires:  pkgconfig
-BuildRequires:  pkgconfig(fuse) >= 2.8.4
+BuildRequires:  pkgconfig(fuse3)
 BuildRequires:  pkgconfig(libcurl)
 BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(openssl)
@@ -57,6 +57,27 @@ cp -p %{SOURCE1} passwd-s3fs
 %license COPYING
 
 %changelog
+* Thu Feb  5 2026  Julio González Gil <packages@juliogonzalez.es> - 1.97-1
+- Update to 1.97 from https://github.com/s3fs-fuse/s3fs-fuse/releases/tag/v1.97 (#2416816)
+  * Bugfix: Do not honor "-o nonempty"
+
+* Thu Feb  5 2026  Julio González Gil <packages@juliogonzalez.es> - 1.96-1
+- Update to 1.96 from https://github.com/s3fs-fuse/s3fs-fuse/releases/tag/v1.96 (#2416816)
+  * Require FUSE 3 on Linux
+  * Require C++14
+  * Improve IO concurrency
+  * Rename -o endpoint to -o region for clarity
+  * Avoid HeadObject calls with improved stats cache usage
+
+* Sat Jan 17 2026 Fedora Release Engineering <releng@fedoraproject.org> - 1.95-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_44_Mass_Rebuild
+
+* Fri Jul 25 2025 Fedora Release Engineering <releng@fedoraproject.org> - 1.95-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_43_Mass_Rebuild
+
+* Sun Jan 19 2025 Fedora Release Engineering <releng@fedoraproject.org> - 1.95-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_42_Mass_Rebuild
+
 * Sat Oct 26 2024 Julio González Gil <packages@juliogonzalez.es> - 1.95-1
 - Update to 1.95 from https://github.com/s3fs-fuse/s3fs-fuse/releases/tag/v1.95 (#2321940)
   * IMPORTANT: This is the last release supporting CentOS7 or clones
